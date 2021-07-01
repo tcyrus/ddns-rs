@@ -44,24 +44,12 @@ impl IP_Set {
     /// Returns an IP set if either an ipv4 or ipv6 address is provided 
     pub fn with(ipv4: Option<String>, ipv6: Option<String>) -> Option<IP_Set> {
         // TODO: IP validation can happen here (is it a valid IPV4/6 address)
-        let v4 = match ipv4 {
-            None => None,
-            Some(addr) => if addr.len() > 0 { Some(addr) } else { None }
-        };
+        let v4 = ipv4.filter(|&addr| addr.len() > 0);
+        let v6 = ipv6.filter(|&addr| addr.len() > 0);
 
-        let v6 = match ipv6 {
-            None => None,
-            Some(addr) => if addr.len() > 0 { Some(addr) } else { None }
-        };
-
-        if v4 == None && v6 == None {
-            return None
+        match (v4, v6) {
+            (None, None) => None,
+            (_, _) => Some(IP_Set { ipv6: v6, ipv4: v4 }),
         }
-    
-        return Some(IP_Set {
-            ipv6: v6,
-            ipv4: v4
-        })
     }
-
 }
